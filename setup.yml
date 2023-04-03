@@ -1,0 +1,11 @@
+- hosts: main
+  roles:
+    - essentials
+    - swap
+    - docker
+    - traefik
+    - mysql
+    - wordpress
+    # - node-exporter
+    # - gitlab
+    - reboot

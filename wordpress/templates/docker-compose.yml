@@ -1,0 +1,31 @@
+version: '3.3'
+
+services:
+
+  wordpress:
+    image: wordpress
+    restart: always
+    container_name: wordpress
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: projectDatabase
+      WORDPRESS_DB_USER: databaseUser
+      WORDPRESS_DB_PASSWORD: databasePassword
+    volumes:
+      - wordpress:/var/www/html
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=web"
+      - "traefik.http.routers.wordpress.rule=Host(`wp-staging.example.com`)"
+      - "traefik.http.routers.wordpress.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.wordpress.entrypoints=http,https"
+      - "traefik.http.services.wordpress.loadbalancer.server.port=80"
+
+volumes:
+  wordpress:
+
+networks:
+  web:
+    external: true
