@@ -1,0 +1,25 @@
+- name: Launch filebrowser container
+  community.docker.docker_container:
+    name: filebrowser
+    image: filebrowser:s6
+    user: "${UID}:${GID}"
+    restart_policy: always
+    recreate: true
+    pull: true
+    volumes:
+      - "wordpress:/srv"
+      - "~/filebrowser/filebrowser.db:/database/filebrowser.db"
+      - "~/filebrowser/settings.json:/config/settings.json"
+    env:
+      TZ: Asia/Tehran
+      # PUID: 1000
+      # PGID: 1000
+    networks:
+      - name: "web"
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: "web"
+      traefik.http.routers.filebrowser.rule: "Host(`example.com`)"
+      traefik.http.routers.filebrowser.tls.certresolver: "letsencrypt"
+      traefik.http.routers.filebrowser.entrypoints: "http,https"
+      traefik.http.services.filebrowser.loadbalancer.server.port: "80"

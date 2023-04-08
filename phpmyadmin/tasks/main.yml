@@ -1,0 +1,24 @@
+- name: Launch phpmyadmin container
+  community.docker.docker_container:
+    name: phpmyadmin
+    image: phpmyadmin:5.2
+    restart_policy: always
+    recreate: true
+    pull: true
+    networks:
+      - name: "web"
+    env:
+      PMA_ABSOLUTE_URI: "https://example.com"
+      PMA_ARBITRARY: "1"
+      PMA_HOST: "db"
+      PMA_PORT: "3306"
+      MYSQL_ROOT_PASSWORD: ""
+      PMA_USER: ""
+      PMA_PASSWORD: ""
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: "web"
+      traefik.http.routers.phpmyadmin.rule: "Host(`example.com`)"
+      traefik.http.routers.phpmyadmin.tls.certresolver: "letsencrypt"
+      traefik.http.routers.phpmyadmin.entrypoints: "http,https"
+      traefik.http.services.phpmyadmin.loadbalancer.server.port: "80"
